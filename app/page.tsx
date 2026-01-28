@@ -18,6 +18,18 @@ export default function Home() {
     }
   }, [isLoading, user, router])
 
+  // Timeout de seguridad - si tarda más de 3 segundos, redirigir al login
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isLoading) {
+        console.log('Auth timeout - redirecting to login')
+        router.push('/login')
+      }
+    }, 3000)
+
+    return () => clearTimeout(timeout)
+  }, [isLoading, router])
+
   const handleLogout = async () => {
     await signOut()
     router.push('/login')
