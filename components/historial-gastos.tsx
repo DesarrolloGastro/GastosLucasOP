@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { Search, Filter, ChevronLeft, ChevronRight, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { supabase } from '@/lib/supabase'
@@ -19,7 +18,7 @@ interface GastoData {
   estado: 'en-revision' | 'aprobado' | 'desaprobado' | 'pagado'
   concepto: string
   eerr: boolean
-  op: boolean
+  op: string | null
   fileDriveUrl: string | null
 }
 
@@ -77,7 +76,7 @@ export function HistorialGastos({ isGerencia, userId }: HistorialGastosProps) {
           categoria: row.categoria || '',
           concepto: row.detalle_servicio || '',
           eerr: row.eerr || false,
-          op: row.op || false,
+          op: row.op || null,
           fileDriveUrl: row.file_drive_url || null,
         }))
         setData(formattedData)
@@ -128,7 +127,7 @@ export function HistorialGastos({ isGerencia, userId }: HistorialGastosProps) {
     }
   }
 
-  const toggleCheckbox = async (realId: number, field: 'eerr' | 'op', currentValue: boolean) => {
+  const toggleEerr = async (realId: number, currentValue: boolean) => {
     if (!isGerencia) {
       alert('Solo Gerencia puede modificar estos campos')
       return
@@ -137,14 +136,39 @@ export function HistorialGastos({ isGerencia, userId }: HistorialGastosProps) {
     try {
       const { error } = await supabase
         .from('gastos')
-        .update({ [field]: !currentValue })
+        .update({ eerr: !currentValue })
         .eq('id', realId)
 
       if (error) throw error
 
       setData((prev) =>
         prev.map((item) =>
-          item.realId === realId ? { ...item, [field]: !currentValue } : item
+          item.realId === realId ? { ...item, eerr: !currentValue } : item
+        )
+      )
+    } catch (error) {
+      console.error('Error updating:', error)
+      alert('Error al actualizar')
+    }
+  }
+
+  const updateOp = async (realId: number, value: string) => {
+    if (!isGerencia) {
+      alert('Solo Gerencia puede modificar estos campos')
+      return
+    }
+
+    try {
+      const { error } = await supabase
+        .from('gastos')
+        .update({ op: value || null })
+        .eq('id', realId)
+
+      if (error) throw error
+
+      setData((prev) =>
+        prev.map((item) =>
+          item.realId === realId ? { ...item, op: value || null } : item
         )
       )
     } catch (error) {
@@ -223,19 +247,17 @@ export function HistorialGastos({ isGerencia, userId }: HistorialGastosProps) {
           <SelectTrigger className="w-[140px] bg-white/10 border-white/20 text-white rounded-xl h-11 focus:ring-purple-500">
             <SelectValue placeholder="Local" />
           </SelectTrigger>
-          <SelectContent className="bg-[#1e0f32]/95 backdrop-blur-xl border-white/20 text-white rounded-xl">
-            <SelectItem value="all" className="focus:bg-white/10 focus:text-white rounded-lg">
-              Todos
-            </SelectItem>
-            <SelectItem value="costa-7070" className="focus:bg-white/10 focus:text-white rounded-lg">
-              Costa 7070
-            </SelectItem>
-            <SelectItem value="kona" className="focus:bg-white/10 focus:text-white rounded-lg">
-              Kona
-            </SelectItem>
-            <SelectItem value="on-time" className="focus:bg-white/10 focus:text-white rounded-lg">
-              On Time
-            </SelectItem>
+          <SelectContent className="bg-[#1e0f32]/95 backdrop-blur-xl border-white/20 text-white rounded-xl max-h-[300px]">
+            <SelectItem value="all" className="focus:bg-white/10 focus:text-white rounded-lg">Todos</SelectItem>
+            <SelectItem value="Costa 7070" className="focus:bg-white/10 focus:text-white rounded-lg">Costa 7070</SelectItem>
+            <SelectItem value="Comedor" className="focus:bg-white/10 focus:text-white rounded-lg">Comedor</SelectItem>
+            <SelectItem value="Kona" className="focus:bg-white/10 focus:text-white rounded-lg">Kona</SelectItem>
+            <SelectItem value="La Mala" className="focus:bg-white/10 focus:text-white rounded-lg">La Mala</SelectItem>
+            <SelectItem value="La Malita" className="focus:bg-white/10 focus:text-white rounded-lg">La Malita</SelectItem>
+            <SelectItem value="Mil Vidas" className="focus:bg-white/10 focus:text-white rounded-lg">Mil Vidas</SelectItem>
+            <SelectItem value="Cruza Polo" className="focus:bg-white/10 focus:text-white rounded-lg">Cruza Polo</SelectItem>
+            <SelectItem value="Cruza Recoleta" className="focus:bg-white/10 focus:text-white rounded-lg">Cruza Recoleta</SelectItem>
+            <SelectItem value="Conchinchina" className="focus:bg-white/10 focus:text-white rounded-lg">Conchinchina</SelectItem>
           </SelectContent>
         </Select>
 
@@ -243,19 +265,20 @@ export function HistorialGastos({ isGerencia, userId }: HistorialGastosProps) {
           <SelectTrigger className="w-[140px] bg-white/10 border-white/20 text-white rounded-xl h-11 focus:ring-purple-500">
             <SelectValue placeholder="Categoria" />
           </SelectTrigger>
-          <SelectContent className="bg-[#1e0f32]/95 backdrop-blur-xl border-white/20 text-white rounded-xl">
-            <SelectItem value="all" className="focus:bg-white/10 focus:text-white rounded-lg">
-              Todas
-            </SelectItem>
-            <SelectItem value="operacion" className="focus:bg-white/10 focus:text-white rounded-lg">
-              Operacion
-            </SelectItem>
-            <SelectItem value="marketing" className="focus:bg-white/10 focus:text-white rounded-lg">
-              Marketing
-            </SelectItem>
-            <SelectItem value="valet" className="focus:bg-white/10 focus:text-white rounded-lg">
-              Valet Parking
-            </SelectItem>
+          <SelectContent className="bg-[#1e0f32]/95 backdrop-blur-xl border-white/20 text-white rounded-xl max-h-[300px]">
+            <SelectItem value="all" className="focus:bg-white/10 focus:text-white rounded-lg">Todas</SelectItem>
+            <SelectItem value="Comisiones por Venta" className="focus:bg-white/10 focus:text-white rounded-lg">Comisiones por Venta</SelectItem>
+            <SelectItem value="CMV" className="focus:bg-white/10 focus:text-white rounded-lg">CMV</SelectItem>
+            <SelectItem value="Costo de Ocupacion" className="focus:bg-white/10 focus:text-white rounded-lg">Costo de Ocupacion</SelectItem>
+            <SelectItem value="Servicios Publicos" className="focus:bg-white/10 focus:text-white rounded-lg">Servicios Publicos</SelectItem>
+            <SelectItem value="Gtos de operación" className="focus:bg-white/10 focus:text-white rounded-lg">Gtos de operación</SelectItem>
+            <SelectItem value="Regalias" className="focus:bg-white/10 focus:text-white rounded-lg">Regalias</SelectItem>
+            <SelectItem value="Costo Recaudacion (TC)" className="focus:bg-white/10 focus:text-white rounded-lg">Costo Recaudacion (TC)</SelectItem>
+            <SelectItem value="Gtos de Mantenimiento" className="focus:bg-white/10 focus:text-white rounded-lg">Gtos de Mantenimiento</SelectItem>
+            <SelectItem value="Honorarios" className="focus:bg-white/10 focus:text-white rounded-lg">Honorarios</SelectItem>
+            <SelectItem value="Com Tarjetas y Gs Bancarios" className="focus:bg-white/10 focus:text-white rounded-lg">Com Tarjetas y Gs Bancarios</SelectItem>
+            <SelectItem value="Impuestos" className="focus:bg-white/10 focus:text-white rounded-lg">Impuestos</SelectItem>
+            <SelectItem value="Gtos Mkt y publicidad" className="focus:bg-white/10 focus:text-white rounded-lg">Gtos Mkt y publicidad</SelectItem>
           </SelectContent>
         </Select>
 
@@ -350,26 +373,42 @@ export function HistorialGastos({ isGerencia, userId }: HistorialGastosProps) {
                     </td>
                   )}
                   <td className="text-center px-4 py-4">
-                    <Checkbox
-                      checked={item.eerr}
-                      onCheckedChange={() => toggleCheckbox(item.realId, 'eerr', item.eerr)}
-                      disabled={!isGerencia}
-                      className={cn(
-                        'border-white/30 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600',
-                        !isGerencia && 'opacity-50 cursor-not-allowed'
-                      )}
-                    />
+                    {isGerencia ? (
+                      <Select
+                        value={item.eerr ? 'si' : 'no'}
+                        onValueChange={(value) => toggleEerr(item.realId, value === 'no')}
+                      >
+                        <SelectTrigger className="w-[70px] h-8 bg-white/10 border-white/20 text-white text-xs rounded-lg">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#1e0f32]/95 backdrop-blur-xl border-white/20 text-white rounded-lg">
+                          <SelectItem value="si" className="focus:bg-white/10 focus:text-white text-xs">Sí</SelectItem>
+                          <SelectItem value="no" className="focus:bg-white/10 focus:text-white text-xs">No</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <span className={cn(
+                        'text-sm',
+                        item.eerr ? 'text-emerald-400' : 'text-white/40'
+                      )}>
+                        {item.eerr ? 'Sí' : 'No'}
+                      </span>
+                    )}
                   </td>
                   <td className="text-center px-4 py-4">
-                    <Checkbox
-                      checked={item.op}
-                      onCheckedChange={() => toggleCheckbox(item.realId, 'op', item.op)}
-                      disabled={!isGerencia}
-                      className={cn(
-                        'border-white/30 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600',
-                        !isGerencia && 'opacity-50 cursor-not-allowed'
-                      )}
-                    />
+                    {isGerencia ? (
+                      <Input
+                        type="text"
+                        value={item.op || ''}
+                        onChange={(e) => updateOp(item.realId, e.target.value)}
+                        placeholder="-"
+                        className="w-[80px] h-8 bg-white/10 border-white/20 text-white text-xs text-center rounded-lg focus:border-purple-500"
+                      />
+                    ) : (
+                      <span className="text-white/60 text-sm">
+                        {item.op || '-'}
+                      </span>
+                    )}
                   </td>
                 </tr>
               ))

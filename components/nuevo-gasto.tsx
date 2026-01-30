@@ -102,14 +102,32 @@ export function NuevoGasto() {
                 <SelectValue placeholder="Seleccionar local" />
               </SelectTrigger>
               <SelectContent className="bg-[#1e0f32]/95 backdrop-blur-xl border-white/20 text-white rounded-xl">
-                <SelectItem value="costa-7070" className="focus:bg-white/10 focus:text-white rounded-lg">
+                <SelectItem value="Costa 7070" className="focus:bg-white/10 focus:text-white rounded-lg">
                   Costa 7070
                 </SelectItem>
-                <SelectItem value="kona" className="focus:bg-white/10 focus:text-white rounded-lg">
+                <SelectItem value="Comedor" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  Comedor
+                </SelectItem>
+                <SelectItem value="Kona" className="focus:bg-white/10 focus:text-white rounded-lg">
                   Kona
                 </SelectItem>
-                <SelectItem value="on-time" className="focus:bg-white/10 focus:text-white rounded-lg">
-                  On Time
+                <SelectItem value="La Mala" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  La Mala
+                </SelectItem>
+                <SelectItem value="La Malita" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  La Malita
+                </SelectItem>
+                <SelectItem value="Mil Vidas" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  Mil Vidas
+                </SelectItem>
+                <SelectItem value="Cruza Polo" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  Cruza Polo
+                </SelectItem>
+                <SelectItem value="Cruza Recoleta" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  Cruza Recoleta
+                </SelectItem>
+                <SelectItem value="Conchinchina" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  Conchinchina
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -217,15 +235,42 @@ export function NuevoGasto() {
               <SelectTrigger className="bg-white/10 border-white/20 text-white rounded-xl h-12 focus:ring-purple-500">
                 <SelectValue placeholder="Seleccionar categoría" />
               </SelectTrigger>
-              <SelectContent className="bg-[#1e0f32]/95 backdrop-blur-xl border-white/20 text-white rounded-xl">
-                <SelectItem value="operacion" className="focus:bg-white/10 focus:text-white rounded-lg">
-                  Gastos de Operación
+              <SelectContent className="bg-[#1e0f32]/95 backdrop-blur-xl border-white/20 text-white rounded-xl max-h-[300px]">
+                <SelectItem value="Comisiones por Venta" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  Comisiones por Venta
                 </SelectItem>
-                <SelectItem value="marketing" className="focus:bg-white/10 focus:text-white rounded-lg">
-                  Marketing
+                <SelectItem value="CMV" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  CMV
                 </SelectItem>
-                <SelectItem value="valet" className="focus:bg-white/10 focus:text-white rounded-lg">
-                  Valet Parking
+                <SelectItem value="Costo de Ocupacion" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  Costo de Ocupacion
+                </SelectItem>
+                <SelectItem value="Servicios Publicos" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  Servicios Publicos
+                </SelectItem>
+                <SelectItem value="Gtos de operación" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  Gtos de operación
+                </SelectItem>
+                <SelectItem value="Regalias" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  Regalias
+                </SelectItem>
+                <SelectItem value="Costo Recaudacion (TC)" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  Costo Recaudacion (TC)
+                </SelectItem>
+                <SelectItem value="Gtos de Mantenimiento" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  Gtos de Mantenimiento
+                </SelectItem>
+                <SelectItem value="Honorarios" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  Honorarios
+                </SelectItem>
+                <SelectItem value="Com Tarjetas y Gs Bancarios" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  Com Tarjetas y Gs Bancarios
+                </SelectItem>
+                <SelectItem value="Impuestos" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  Impuestos
+                </SelectItem>
+                <SelectItem value="Gtos Mkt y publicidad" className="focus:bg-white/10 focus:text-white rounded-lg">
+                  Gtos Mkt y publicidad
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -234,19 +279,13 @@ export function NuevoGasto() {
           {/* Evento */}
           <div className="space-y-2">
             <Label className="text-white/80">Evento</Label>
-            <Select value={formData.evento} onValueChange={(value) => setFormData({ ...formData, evento: value })}>
-              <SelectTrigger className="bg-white/10 border-white/20 text-white rounded-xl h-12 focus:ring-purple-500">
-                <SelectValue placeholder="Seleccionar tipo de evento" />
-              </SelectTrigger>
-              <SelectContent className="bg-[#1e0f32]/95 backdrop-blur-xl border-white/20 text-white rounded-xl">
-                <SelectItem value="normal" className="focus:bg-white/10 focus:text-white rounded-lg">
-                  Normal
-                </SelectItem>
-                <SelectItem value="especial" className="focus:bg-white/10 focus:text-white rounded-lg">
-                  Especial
-                </SelectItem>
-              </SelectContent>
-            </Select>
+            <Input
+              type="text"
+              placeholder="Escriba el evento (opcional)..."
+              value={formData.evento}
+              onChange={(e) => setFormData({ ...formData, evento: e.target.value })}
+              className="bg-white/10 border-white/20 text-white placeholder:text-white/40 rounded-xl h-12 focus:border-purple-500 focus:ring-purple-500"
+            />
           </div>
         </div>
 
